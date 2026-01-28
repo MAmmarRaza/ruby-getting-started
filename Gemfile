@@ -14,12 +14,13 @@ gem "puma", ">= 7.0"
 
 gem 'bootsnap', require: false
 gem 'listen'
-
+gem 'datadog', require: 'datadog/auto_instrument'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc',          group: :doc
 
 # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
 gem 'spring',        group: :development
+
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

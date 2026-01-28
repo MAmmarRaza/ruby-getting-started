@@ -17,8 +17,9 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  # For details on connection pooling, see rails configuration guide
-  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  username: devswift
+  password: '12qw!@QW'
+  host: 127.0.0.1
   pool: 5
 
 development:
