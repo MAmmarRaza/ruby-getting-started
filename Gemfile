@@ -34,3 +34,24 @@ gem 'spring',        group: :development
 
 # https://devcenter.heroku.com/articles/h12-request-timeout-in-ruby-mri
 gem "rack-timeout", "~> 0.7.0"
+
+# Code Quality & Security Tools
+group :development, :test do
+  # Code style checker
+  gem 'rubocop', '~> 1.66', require: false
+  gem 'rubocop-rails', '~> 2.24', require: false
+  gem 'rubocop-performance', '~> 1.20', require: false
+  gem 'rubocop-rspec', '~> 3.0', require: false
+  
+  # Security vulnerability scanner
+  gem 'brakeman', '~> 6.0', require: false
+  
+  # N+1 query detection
+  gem 'bullet', '~> 7.0', require: false
+  
+  # Code coverage
+  gem 'simplecov', '~> 0.22', require: false
+  
+  # Query analysis
+  gem 'query_diet', require: false
+end

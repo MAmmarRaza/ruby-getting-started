@@ -1,8 +1,39 @@
 {
-  "name": "Start on Heroku: Ruby",
-  "description": "A barebones Rails app, which can easily be deployed to Heroku",
-  "image": "heroku/ruby",
+  "name": "Ruby Getting Started",
+  "description": "A template for getting started with Ruby on Heroku.",
   "repository": "https://github.com/heroku/ruby-getting-started",
-  "keywords": ["ruby", "rails" ],
-  "addons": ["heroku-postgresql"]
+  "logo": "https://raw.githubusercontent.com/heroku/ruby-getting-started/main/public/icon.svg",
+  "keywords": ["ruby", "rails", "example"],
+  "success_url": "/",
+  "env": {
+    "RAILS_ENV": "production",
+    "RACK_ENV": "production"
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  },
+  "image": "heroku/ruby",
+  "buildpacks": [
+    {
+      "url": "heroku/ruby"
+    }
+  ],
+  "environments": {
+    "review": {
+      "scripts": {
+        "postdeploy": "bundle exec rails db:migrate"
+      },
+      "env": {
+        "RAILS_ENV": "production"
+      }
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql:mini"
+    }
+  ]
 }

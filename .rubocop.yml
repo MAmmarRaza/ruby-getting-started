@@ -1,0 +1,114 @@
+require:
+  - rubocop-rails
+  - rubocop-performance
+
+AllCops:
+  TargetRubyVersion: 3.3
+  NewCops: enable
+  Exclude:
+    - 'db/**/*'
+    - 'bin/**/*'
+    - 'config/**/*'
+    - 'vendor/**/*'
+    - 'node_modules/**/*'
+    - 'tmp/**/*'
+    - 'log/**/*'
+
+# Performance Rules - Critical for preventing bad queries
+Performance:
+  Enabled: true
+  Exclude:
+    - 'db/**/*'
+    - 'config/**/*'
+
+Performance/Count:
+  Enabled: true
+
+Performance/Detect:
+  Enabled: true
+
+Performance/StartWith:
+  Enabled: true
+
+Performance/EndWith:
+  Enabled: true
+
+Performance/RegexpMatch:
+  Enabled: true
+
+# Rails-specific rules
+Rails:
+  Enabled: true
+
+Rails/FindEach:
+  Enabled: true
+  Description: 'Use find_each instead of each to avoid loading all records into memory'
+
+Rails/FindBy:
+  Enabled: true
+
+Rails/InverseOf:
+  Enabled: true
+
+Rails/HasManyOrHasOneDependent:
+  Enabled: true
+
+Rails/IndexBy:
+  Enabled: true
+
+Rails/IndexWith:
+  Enabled: true
+
+Rails/Pluck:
+  Enabled: true
+  Description: 'Use pluck instead of map when you only need specific attributes'
+
+Rails/SkipsModelValidations:
+  Enabled: true
+
+# Custom rules for query optimization
+Style/HashSyntax:
+  Enabled: true
+
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: single_quotes
+
+# Prevent common bad practices
+Style/GuardClause:
+  Enabled: true
+
+Style/IfUnlessModifier:
+  Enabled: true
+
+Metrics/AbcSize:
+  Max: 20
+  Exclude:
+    - 'db/migrate/**/*'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+    - 'test/**/*'
+    - 'config/**/*'
+
+Metrics/ClassLength:
+  Max: 200
+
+Metrics/MethodLength:
+  Max: 30
+  Exclude:
+    - 'db/migrate/**/*'
+
+Metrics/ModuleLength:
+  Max: 200
+
+Metrics/ParameterLists:
+  Max: 5
+
+# Prevent N+1 queries - warn about .all without limit
+Rails/Unscoped:
+  Enabled: true
+
+# Custom cop to detect potential N+1 issues
+# This is a placeholder - you can enhance with custom cops

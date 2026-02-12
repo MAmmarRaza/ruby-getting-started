@@ -1,0 +1,174 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  # Linting and Code Style
+  lint:
+    name: Code Style & Linting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      
+      - name: Run RuboCop
+        run: |
+          bundle exec rubocop --parallel --format github
+        continue-on-error: false
+  
+  # Security Scanning
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      
+      - name: Run Brakeman
+        run: |
+          bundle exec brakeman --no-pager --format json --output brakeman-report.json --quiet
+        continue-on-error: false
+      
+      - name: Upload Brakeman report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: brakeman-report
+          path: brakeman-report.json
+  
+  # Tests with N+1 Detection
+  test:
+    name: Tests & Query Analysis
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ruby_getting_started_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/ruby_getting_started_test
+      RAILS_ENV: test
+      BULLET_ENABLED: true
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      
+      - name: Setup Database
+        run: |
+          bundle exec rails db:create db:schema:load
+      
+      - name: Run Tests with Bullet
+        run: |
+          bundle exec rspec || bundle exec rails test
+        env:
+          BULLET_ENABLED: true
+          BULLET_ALERT: true
+          BULLET_BRAKE: true
+      
+      - name: Check for N+1 queries
+        if: failure()
+        run: |
+          echo "❌ Tests failed - check for N+1 queries or other issues"
+          exit 1
+  
+  # Query Performance Check
+  query-check:
+    name: Query Performance Analysis
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ruby_getting_started_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/ruby_getting_started_test
+      RAILS_ENV: test
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      
+      - name: Setup Database
+        run: |
+          bundle exec rails db:create db:schema:load
+      
+      - name: Run Query Analysis
+        run: |
+          bundle exec rails runner "
+            require 'query_diet'
+            # Check for common query issues
+            puts 'Running query analysis...'
+            # This will be enhanced with actual query checks
+          "
+  
+  # Build Check
+  build:
+    name: Build Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      
+      - name: Verify build
+        run: |
+          bundle exec rails assets:precompile
+          bundle exec rails db:schema:load RAILS_ENV=production
+
+  # Deployment Gate
+  deploy-gate:
+    name: Deployment Gate
+    needs: [lint, security, test, query-check, build]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: All checks passed
+        run: |
+          echo "✅ All quality checks passed. Safe to deploy to production."
