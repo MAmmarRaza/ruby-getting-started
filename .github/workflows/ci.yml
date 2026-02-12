@@ -147,6 +147,8 @@ jobs:
           bundler-cache: true
       
       - name: Verify build
+        env:
+          SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE || 'dummy-secret-key-base-for-ci-build-check-only-not-for-production-use-change-this-in-production-environment' }}
         run: |
           RAILS_ENV=production bundle exec rails assets:precompile
           RAILS_ENV=production bundle exec rails db:schema:load DISABLE_DATABASE_ENVIRONMENT_CHECK=1

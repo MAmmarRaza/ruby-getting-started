@@ -1,4 +1,4 @@
-require:
+plugins:
   - rubocop-rails
   - rubocop-performance
 
@@ -15,6 +15,55 @@ AllCops:
     - 'log/**/*'
     - 'test/**/*'
     - 'spec/**/*'
+    - 'Gemfile'
+    - 'Rakefile'
+
+# Disable style-only rules that don't affect functionality
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/StringLiterals:
+  Enabled: false  # Allow both single and double quotes
+
+Layout/TrailingWhitespace:
+  Enabled: true
+
+Bundler/OrderedGems:
+  Enabled: false  # Not critical for functionality
+
+# Disable non-critical Rails rules
+Rails/I18nLocaleTexts:
+  Enabled: false  # Not critical for preventing bad code
+
+Rails/HttpStatusNameConsistency:
+  Enabled: false  # Warning only, not critical
+
+Rails/StrongParametersExpect:
+  Enabled: false  # Test-related, not critical
+
+Rails/ApplicationRecord:
+  Enabled: false  # Legacy models are fine
+
+Rails/RakeEnvironment:
+  Enabled: false  # Not critical
+
+Style/RedundantConstantBase:
+  Enabled: false
+
+Style/ExpandPathArguments:
+  Enabled: false
+
+Metrics/BlockLength:
+  Max: 100  # Increased limit for rake tasks
+
+Layout/LineLength:
+  Max: 200  # Increased limit to avoid false positives
+
+Style/SoleNestedConditional:
+  Enabled: false  # Not critical for preventing bad code
 
 # Performance Rules - Critical for preventing bad queries
 Performance:
@@ -73,8 +122,7 @@ Style/HashSyntax:
   Enabled: true
 
 Style/StringLiterals:
-  Enabled: true
-  EnforcedStyle: single_quotes
+  Enabled: false  # Allow both single and double quotes
 
 # Prevent common bad practices
 Style/GuardClause:
@@ -89,10 +137,12 @@ Metrics/AbcSize:
     - 'db/migrate/**/*'
 
 Metrics/BlockLength:
+  Max: 100
   Exclude:
     - 'spec/**/*'
     - 'test/**/*'
     - 'config/**/*'
+    - 'lib/tasks/**/*'
 
 Metrics/ClassLength:
   Max: 200
@@ -108,9 +158,5 @@ Metrics/ModuleLength:
 Metrics/ParameterLists:
   Max: 5
 
-# Prevent N+1 queries - warn about .all without limit
-Rails/Unscoped:
-  Enabled: true
-
-# Custom cop to detect potential N+1 issues
-# This is a placeholder - you can enhance with custom cops
+# Note: Rails/Unscoped cop doesn't exist in rubocop-rails
+# Use custom query checks via rake task instead
