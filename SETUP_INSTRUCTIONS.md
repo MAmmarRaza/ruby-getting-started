@@ -198,3 +198,4 @@ bundle exec brakeman
 ---
 
 **Remember:** The goal is to catch issues early, not to block developers. If a rule is too strict, discuss with the team and adjust! 🤝
+
