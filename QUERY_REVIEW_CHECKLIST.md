@@ -81,7 +81,8 @@ After deployment, monitor:
 BULLET_ENABLED=true rails server
 
 # Check query patterns
-bundle exec rake quality:check_queries
+# Note: Custom query checker removed - use Bullet instead (runs automatically in tests)
+# BULLET_ENABLED=true bundle exec rails test
 
 # Review logs
 tail -f log/development.log | grep "SELECT"

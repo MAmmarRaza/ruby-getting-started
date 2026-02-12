@@ -18,14 +18,15 @@ This document explains every step, job, and configuration in the CI/CD pipeline.
 
 ## 📋 Pipeline Structure
 
-The pipeline consists of **5 parallel jobs** that run simultaneously, followed by **1 deployment gate**:
+The pipeline consists of **4 parallel jobs** that run simultaneously, followed by **1 deployment gate**:
 
 1. **Code Style & Linting** (RuboCop)
 2. **Security Scan** (Brakeman)
 3. **Tests & Query Analysis** (Rails tests + Bullet)
-4. **Query Performance Analysis** (Custom query checker)
-5. **Build Check** (Asset compilation)
-6. **Deployment Gate** (Final approval)
+4. **Build Check** (Asset compilation)
+5. **Deployment Gate** (Final approval)
+
+**Note:** Custom query checker removed - Bullet (in the test job) handles N+1 detection.
 
 ---
 
@@ -276,14 +277,14 @@ The pipeline consists of **5 parallel jobs** that run simultaneously, followed b
 
 ---
 
-### Job 6: Deployment Gate (`deploy-gate`)
+### Job 5: Deployment Gate (`deploy-gate`)
 
 **Purpose:** Final check that all previous jobs passed before allowing deployment.
 
 #### Configuration:
 
-- **`needs: [lint, security, test, query-check, build]`**
-  - **What:** Waits for all 5 jobs to complete
+- **`needs: [lint, security, test, build]`**
+  - **What:** Waits for all 4 jobs to complete
   - **Why:** Only runs if ALL checks pass
 - **`if: github.ref == 'refs/heads/main' && github.event_name == 'push'`**
   - **What:** Only runs on pushes to `main` branch

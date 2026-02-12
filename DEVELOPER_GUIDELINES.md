@@ -233,7 +233,8 @@ user.posts_count  # Pre-calculated
 bundle exec rake quality:all
 
 # Check for N+1 queries
-bundle exec rake quality:check_queries
+# Note: Custom query checker removed - use Bullet instead (runs automatically in tests)
+# BULLET_ENABLED=true bundle exec rails test
 
 # Run RuboCop
 bundle exec rubocop

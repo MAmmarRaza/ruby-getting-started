@@ -142,7 +142,7 @@ end
 
 **What it does:**
 - Provides `rake quality:all` command
-- Provides `rake quality:check_queries` command
+- ~~Provides `rake quality:check_queries` command~~ (REMOVED - custom checker was optional)
 - Runs RuboCop, Brakeman, tests
 - Checks for query patterns
 
@@ -346,7 +346,8 @@ bundle exec rubocop
 bundle exec brakeman
 
 # Test query checker
-bundle exec rake quality:check_queries
+# Note: Custom query checker removed - use Bullet instead (runs automatically in tests)
+# BULLET_ENABLED=true bundle exec rails test
 
 # Test with Bullet
 BULLET_ENABLED=true bundle exec rails test

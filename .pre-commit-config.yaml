@@ -21,14 +21,6 @@ repos:
         pass_filenames: false
         always_run: true
 
-      - id: query-check
-        name: Query Pattern Check
-        entry: bundle exec rake quality:check_queries
-        language: system
-        types: [ruby]
-        pass_filenames: false
-        always_run: false
-
       - id: trailing-whitespace
         name: Trailing Whitespace
         entry: bash -c 'git diff --cached --name-only --diff-filter=ACM | grep -E "\.(rb|erb|yml|yaml)$" | xargs sed -i "s/[[:space:]]*$//"'

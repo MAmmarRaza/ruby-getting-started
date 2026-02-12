@@ -22,7 +22,7 @@ jobs:
       
       - name: Run RuboCop
         run: |
-          bundle exec rubocop --parallel --format github || (echo "⚠️ RuboCop found issues. Review and fix them." && exit 1)
+          bundle exec rubocop --parallel --format github
         continue-on-error: false
   
   # Security Scanning
@@ -94,45 +94,6 @@ jobs:
           BULLET_ALERT: true
           BULLET_RAISE: true
   
-  # Query Performance Check
-  query-check:
-    name: Query Performance Analysis
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: ruby_getting_started_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-    
-    env:
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432/ruby_getting_started_test
-      RAILS_ENV: test
-    
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-          bundler-cache: true
-      
-      - name: Setup Database
-        run: |
-          bundle exec rails db:create db:schema:load || bundle exec rails db:setup
-      
-      - name: Run Query Analysis
-        run: |
-          bundle exec rake quality:check_queries
-  
   # Build Check
   build:
     name: Build Check
@@ -160,7 +121,7 @@ jobs:
   # Deployment Gate
   deploy-gate:
     name: Deployment Gate
-    needs: [lint, security, test, query-check, build]
+    needs: [lint, security, test, build]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
